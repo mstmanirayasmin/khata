@@ -19,6 +19,7 @@ A clean, focused personal expense tracker. No accounts, no backend, no build ste
   - Category doughnut with a custom legend and center total
   - Spending-over-time bars with 1M / 3M / All ranges
   - Ranked "average spending per category" bars
+- **Smart light / dark mode** — follows your system preference by default, with Light / Dark / System controls in the sidebar and a quick toggle in the header. Your choice is remembered, charts repaint with theme-aware colors, and the palette is applied before first paint (no flash).
 - **Local-first** — everything is stored in `localStorage`. Your data never leaves your browser.
 - **Extras** — CSV export of the current view, live footer clock with seconds, scroll-to-top button, and a polished page preloader.
 - **Responsive** — a real mobile layout with bottom navigation, a floating add button, and table-to-card transformation.
@@ -110,7 +111,7 @@ This project deliberately avoids the generic "AI-generated dashboard" look: no p
 
 ## Customization
 
-- **Colors, fonts, spacing** — edit the variables in `css/tokens.css`.
+- **Colors, fonts, spacing** — edit `:root` in `css/tokens.css` for light mode and `[data-theme="dark"]` for dark mode. Every color, including chart series and category swatches, is a token.
 - **Categories** — edit the `CATEGORIES` array near the top of `js/app.js` (id, label, color, icon).
 - **Currency / locale** — change `"en-BD"` in the `Intl.NumberFormat` calls in `js/app.js` and the `৳` labels in `index.html`.
 - **Seed data** — edit the `SEED` array in `js/app.js`.

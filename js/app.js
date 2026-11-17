@@ -110,6 +110,87 @@
   initPreloader();
 
   /* ------------------------------------------------------------------------
+     Theme — system / light / dark, persisted, with chart repainting
+     ------------------------------------------------------------------------ */
+  const THEME_KEY = "khata.theme";
+  const darkQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const cssToken = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function storedTheme() {
+    try {
+      const v = localStorage.getItem(THEME_KEY);
+      return ["system", "light", "dark"].indexOf(v) !== -1 ? v : "system";
+    } catch (e) {
+      return "system";
+    }
+  }
+
+  let themeMode = storedTheme();
+  let palette = {};
+
+  function refreshPalette() {
+    palette = {};
+    CATEGORIES.forEach((c) => { palette[c.id] = cssToken("--c-" + c.id) || c.color; });
+  }
+
+  function resolvedTheme(mode) {
+    return mode === "system" ? (darkQuery && darkQuery.matches ? "dark" : "light") : mode;
+  }
+
+  function chartTokens() {
+    return {
+      tick: cssToken("--chart-tick"),
+      grid: cssToken("--chart-grid"),
+      tooltip: cssToken("--chart-tooltip"),
+      tooltipInk: cssToken("--chart-tooltip-ink"),
+      bar: cssToken("--chart-bar"),
+      barHover: cssToken("--chart-bar-hover"),
+      empty: cssToken("--chart-empty"),
+    };
+  }
+
+  function updateChartTheme() {
+    if (typeof Chart === "undefined") return;
+    const t = chartTokens();
+    Chart.defaults.color = t.tick;
+    if (donutChart) {
+      donutChart.options.plugins.tooltip.backgroundColor = t.tooltip;
+      donutChart.options.plugins.tooltip.titleColor = t.tooltipInk;
+      donutChart.options.plugins.tooltip.bodyColor = t.tooltipInk;
+      if (donutChart.data.labels[0] === "No data") donutChart.data.datasets[0].backgroundColor = [t.empty];
+      donutChart.update();
+    }
+    if (trendChart) {
+      trendChart.options.plugins.tooltip.backgroundColor = t.tooltip;
+      trendChart.options.plugins.tooltip.titleColor = t.tooltipInk;
+      trendChart.options.plugins.tooltip.bodyColor = t.tooltipInk;
+      trendChart.options.scales.y.grid.color = t.grid;
+      trendChart.data.datasets[0].backgroundColor = t.bar;
+      trendChart.data.datasets[0].hoverBackgroundColor = t.barHover;
+      trendChart.update();
+    }
+  }
+
+  function applyTheme(mode, animate) {
+    themeMode = ["system", "light", "dark"].indexOf(mode) !== -1 ? mode : "system";
+    const resolved = resolvedTheme(themeMode);
+    if (animate) document.documentElement.classList.add("theme-switching");
+    document.documentElement.setAttribute("data-theme", resolved);
+    document.documentElement.setAttribute("data-theme-mode", themeMode);
+    try { localStorage.setItem(THEME_KEY, themeMode); } catch (e) {}
+    refreshPalette();
+    $$('[data-action="set-theme"]').forEach((btn) => {
+      const active = btn.dataset.mode === themeMode;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+    const meta = document.getElementById("meta-theme-color");
+    if (meta) meta.setAttribute("content", resolved === "dark" ? "#141815" : "#f6f4ef");
+    updateChartTheme();
+    if (animate) setTimeout(() => document.documentElement.classList.remove("theme-switching"), 320);
+  }
+
+  /* ------------------------------------------------------------------------
      Seed data & persistence
      ------------------------------------------------------------------------ */
   const SEED = [
@@ -308,7 +389,7 @@
     if (s.top) {
       const c = catById(s.top.id);
       dom["stat-top"].textContent = c.label;
-      dom["stat-top"].style.color = c.color;
+      dom["stat-top"].style.color = palette[c.id] || c.color;
       dom["stat-top-meta"].innerHTML = `<strong>${formatMoney(s.top.total)}</strong> · ${s.top.count} entr${s.top.count === 1 ? "y" : "ies"}`;
     } else {
       dom["stat-top"].textContent = "—";
@@ -339,8 +420,9 @@
       dom.trendChart.parentElement.innerHTML = '<p style="color:var(--muted);font-size:.82rem">Charts unavailable (offline).</p>';
       return;
     }
+    const t = chartTokens();
     Chart.defaults.font.family = "DM Sans, sans-serif";
-    Chart.defaults.color = "#858176";
+    Chart.defaults.color = t.tick;
 
     donutChart = new Chart(dom.donutChart, {
       type: "doughnut",
@@ -352,7 +434,9 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: "#1c1b18",
+            backgroundColor: t.tooltip,
+            titleColor: t.tooltipInk,
+            bodyColor: t.tooltipInk,
             padding: 10,
             cornerRadius: 8,
             callbacks: { label: (ctx) => ` ${ctx.label}: ${formatMoney(ctx.raw)}` },
@@ -363,14 +447,16 @@
 
     trendChart = new Chart(dom.trendChart, {
       type: "bar",
-      data: { labels: [], datasets: [{ data: [], backgroundColor: "rgba(33,89,71,0.85)", hoverBackgroundColor: "#215947", borderRadius: 5, borderSkipped: false, maxBarThickness: 38 }] },
+      data: { labels: [], datasets: [{ data: [], backgroundColor: t.bar, hoverBackgroundColor: t.barHover, borderRadius: 5, borderSkipped: false, maxBarThickness: 38 }] },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: "#1c1b18",
+            backgroundColor: t.tooltip,
+            titleColor: t.tooltipInk,
+            bodyColor: t.tooltipInk,
             padding: 10,
             cornerRadius: 8,
             displayColors: false,
@@ -379,7 +465,7 @@
         },
         scales: {
           x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
-          y: { beginAtZero: true, grid: { color: "#ece8df", drawBorder: false }, border: { display: false }, ticks: { font: { size: 10 }, callback: (v) => "৳" + formatNum(v) } },
+          y: { beginAtZero: true, grid: { color: t.grid, drawBorder: false }, border: { display: false }, ticks: { font: { size: 10 }, callback: (v) => "৳" + formatNum(v) } },
         },
       },
     });
@@ -391,16 +477,16 @@
       if (entries.length) {
         donutChart.data.labels = entries.map((x) => x.c.label);
         donutChart.data.datasets[0].data = entries.map((x) => x.d.total);
-        donutChart.data.datasets[0].backgroundColor = entries.map((x) => x.c.color);
+        donutChart.data.datasets[0].backgroundColor = entries.map((x) => palette[x.c.id] || x.c.color);
         const grand = entries.reduce((sum, x) => sum + x.d.total, 0) || 1;
         dom["donut-legend"].innerHTML = entries.map((x) => `
-          <span class="legend-item"><span class="cat-dot" style="background:${x.c.color}"></span>${esc(x.c.label)}
+          <span class="legend-item"><span class="cat-dot" style="background:${palette[x.c.id] || x.c.color}"></span>${esc(x.c.label)}
             <span class="legend-pct">${Math.round((x.d.total / grand) * 100)}%</span></span>
         `).join("");
       } else {
         donutChart.data.labels = ["No data"];
         donutChart.data.datasets[0].data = [1];
-        donutChart.data.datasets[0].backgroundColor = ["#e3ded2"];
+        donutChart.data.datasets[0].backgroundColor = [chartTokens().empty];
         dom["donut-legend"].innerHTML = '<span style="color:var(--muted);font-size:.78rem">No spending yet</span>';
       }
       donutChart.update();
@@ -432,8 +518,8 @@
     const max = Math.max.apply(null, entries.map((e) => e.avg)) || 1;
     dom["cat-bars"].innerHTML = entries.map((e) => `
       <div class="cat-row">
-        <div class="cat-name"><span class="cat-dot" style="background:${e.c.color}"></span>${esc(e.c.label)}</div>
-        <div class="cat-track"><div class="cat-fill" style="width:${(e.avg / max) * 100}%;background:${e.c.color}"></div></div>
+        <div class="cat-name"><span class="cat-dot" style="background:${palette[e.c.id] || e.c.color}"></span>${esc(e.c.label)}</div>
+        <div class="cat-track"><div class="cat-fill" style="width:${(e.avg / max) * 100}%;background:${palette[e.c.id] || e.c.color}"></div></div>
         <div class="cat-amount num">${formatMoney(e.avg)}<span style="color:var(--muted);font-weight:400"> /tx</span></div>
       </div>
     `).join("");
@@ -473,7 +559,7 @@
         return `<tr>
           <td class="tx-date" data-label="Date">${formatDate(e.date)}</td>
           <td data-label="Category">
-            <span class="tx-cat"><span class="cat-icon" style="background:${c.color}1a;color:${c.color}">${ICONS[c.id]}</span>${esc(c.label)}</span>
+            <span class="tx-cat"><span class="cat-icon" style="background:${palette[c.id] || c.color}1a;color:${palette[c.id] || c.color}">${ICONS[c.id]}</span>${esc(c.label)}</span>
           </td>
           <td data-label="Description" class="tx-desc ${e.description ? "" : "muted"}">${e.description ? esc(e.description) : "No description"}</td>
           <td class="tx-amount tx-amount-cell" data-label="Amount">${formatMoney(e.amount)}</td>
@@ -681,6 +767,8 @@
           case "confirm-delete": confirmDelete(); break;
           case "clear-filters": clearFilters(); break;
           case "export": exportCsv(); break;
+          case "toggle-theme": applyTheme(resolvedTheme(themeMode) === "dark" ? "light" : "dark", true); render(); break;
+          case "set-theme": applyTheme(actionEl.dataset.mode, true); render(); break;
           case "edit": openForm(actionEl.dataset.id); break;
           case "delete": requestDelete(actionEl.dataset.id); break;
         }
@@ -757,10 +845,18 @@
      ------------------------------------------------------------------------ */
   function init() {
     cacheDom();
+    applyTheme(themeMode, false);
     populateSelects();
     initCharts();
     bindEvents();
     render();
+
+    // In "system" mode, follow OS theme changes live.
+    if (darkQuery && darkQuery.addEventListener) {
+      darkQuery.addEventListener("change", () => {
+        if (themeMode === "system") { applyTheme("system", true); render(); }
+      });
+    }
 
     // Scroll-to-top control.
     const toTop = document.getElementById("to-top");

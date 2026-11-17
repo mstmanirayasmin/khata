@@ -1,6 +1,7 @@
 /* ==========================================================================
    Design tokens — single source of truth for the visual system.
-   Change values here to re-theme the whole app.
+   The active palette is selected by the `data-theme` attribute on <html>,
+   which is set by the inline script in index.html before CSS renders.
    ========================================================================== */
 :root {
   /* Surfaces & ink */
@@ -18,10 +19,17 @@
   --accent-hover: #194638;
   --accent-tint: #e3ede7;
   --accent-ink: #215947;
+  --on-accent: #ffffff;
+  --accent-soft: rgba(33, 89, 71, 0.12);
+  --accent-soft-hover: rgba(33, 89, 71, 0.25);
+  --brand-shadow: rgba(33, 89, 71, 0.22);
+  --brand-shadow-strong: rgba(33, 89, 71, 0.35);
 
   /* Warm secondary for highlights / danger */
   --danger: #a2402f;
+  --danger-hover: #8c3527;
   --danger-tint: #f7e7e2;
+  --on-danger: #ffffff;
   --positive: #2f7a5b;
 
   /* Category palette (muted, earthy) */
@@ -32,6 +40,22 @@
   --c-health: #b3524e;
   --c-entertainment: #b58a2b;
   --c-other: #6f7167;
+
+  /* Component-specific surfaces */
+  --row-hover: #fbfaf6;
+  --overlay-scrim: rgba(28, 27, 24, 0.45);
+  --toast-bg: var(--ink);
+  --toast-ink: var(--paper);
+  --toast-check: #8fd6b4;
+
+  /* Chart colors */
+  --chart-grid: #ece8df;
+  --chart-tick: #858176;
+  --chart-tooltip: #1c1b18;
+  --chart-tooltip-ink: #f6f4ef;
+  --chart-bar: rgba(33, 89, 71, 0.85);
+  --chart-bar-hover: #215947;
+  --chart-empty: #e3ded2;
 
   /* Type */
   --font-display: "Fraunces", Georgia, serif;
@@ -66,4 +90,59 @@
   /* Layout */
   --sidebar-w: 248px;
   --content-max: 1240px;
+}
+
+/* ==========================================================================
+   Dark palette — same structure, tuned for contrast and warmth.
+   ========================================================================== */
+:root[data-theme="dark"] {
+  --paper: #141815;
+  --surface: #1c211d;
+  --surface-2: #242b26;
+  --ink: #eef2ec;
+  --ink-soft: #c5cdc3;
+  --muted: #8d998e;
+  --line: #313b34;
+  --line-strong: #424e46;
+
+  --accent: #5ea88a;
+  --accent-hover: #79c0a0;
+  --accent-tint: #20352b;
+  --accent-ink: #96d6b6;
+  --on-accent: #0d1c15;
+  --accent-soft: rgba(94, 168, 138, 0.16);
+  --accent-soft-hover: rgba(94, 168, 138, 0.3);
+  --brand-shadow: rgba(94, 168, 138, 0.2);
+  --brand-shadow-strong: rgba(94, 168, 138, 0.32);
+
+  --danger: #e07a66;
+  --danger-hover: #c65a46;
+  --danger-tint: #3a2421;
+  --on-danger: #2a0f0a;
+  --positive: #6bc39a;
+
+  --c-food: #e28a5c;
+  --c-transport: #7fa8de;
+  --c-shopping: #c88bbd;
+  --c-bills: #6bb3c4;
+  --c-health: #e07b78;
+  --c-entertainment: #d9b04c;
+  --c-other: #9ba395;
+
+  --row-hover: #202822;
+  --overlay-scrim: rgba(0, 0, 0, 0.62);
+  --toast-check: #2f7a5b;
+
+  --chart-grid: #2c362f;
+  --chart-tick: #8d998e;
+  --chart-tooltip: #0e1210;
+  --chart-tooltip-ink: #eef2ec;
+  --chart-bar: rgba(94, 168, 138, 0.85);
+  --chart-bar-hover: #5ea88a;
+  --chart-empty: #2c362f;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.55);
+  --ring: 0 0 0 3px rgba(94, 168, 138, 0.25);
 }

@@ -90,7 +90,7 @@ button {
   display: grid;
   place-items: center;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border-radius: 11px;
   flex: none;
 }
@@ -216,7 +216,7 @@ button {
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .btn-primary:hover {
@@ -237,11 +237,11 @@ button {
 
 .btn-danger {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-danger);
 }
 
 .btn-danger:hover {
-  background: #8c3527;
+  background: var(--danger-hover);
 }
 
 .btn-quiet {
@@ -712,7 +712,7 @@ button {
 
 .chip button {
   border: 0;
-  background: rgba(33, 89, 71, 0.12);
+  background: var(--accent-soft);
   color: inherit;
   width: 17px;
   height: 17px;
@@ -724,7 +724,7 @@ button {
 }
 
 .chip button:hover {
-  background: rgba(33, 89, 71, 0.25);
+  background: var(--accent-soft-hover);
 }
 
 .chip button svg {
@@ -794,7 +794,7 @@ button {
 }
 
 .tx-table tbody tr:hover {
-  background: #fbfaf6;
+  background: var(--row-hover);
 }
 
 .tx-date {
@@ -913,7 +913,7 @@ button {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(28, 27, 24, 0.45);
+  background: var(--overlay-scrim);
   backdrop-filter: blur(3px);
   display: grid;
   place-items: center;
@@ -1050,8 +1050,8 @@ button {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  background: var(--ink);
-  color: #fff;
+  background: var(--toast-bg);
+  color: var(--toast-ink);
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-md);
@@ -1071,9 +1071,68 @@ button {
 .toast svg {
   width: 16px;
   height: 16px;
-  stroke: #8fd6b4;
+  stroke: var(--toast-check);
   stroke-width: 2.5;
   flex: none;
+}
+
+/* ==========================================================================
+   Theme controls & transition
+   ========================================================================== */
+html.theme-switching,
+html.theme-switching * {
+  transition: background-color 0.28s ease, border-color 0.28s ease, color 0.28s ease, box-shadow 0.28s ease !important;
+}
+
+.theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+.appearance {
+  padding: 0 0.3rem 0.25rem;
+}
+
+.appearance-label {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.appearance-modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.2rem;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.appearance-modes button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 0.42rem 0;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.appearance-modes button svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.9;
+}
+
+.appearance-modes button:hover {
+  color: var(--ink);
+}
+
+.appearance-modes button.active {
+  background: var(--surface);
+  color: var(--accent-ink);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================================================
@@ -1154,8 +1213,8 @@ body.is-loading {
   place-items: center;
   border-radius: 16px;
   background: var(--accent);
-  color: #fff;
-  box-shadow: 0 10px 26px rgba(33, 89, 71, 0.22);
+  color: var(--on-accent);
+  box-shadow: 0 10px 26px var(--brand-shadow);
   animation: breathe 1.8s ease-in-out infinite;
 }
 
@@ -1237,7 +1296,7 @@ body.is-loading {
 .to-top:hover {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   transform: translateY(-2px);
 }
 
@@ -1331,9 +1390,9 @@ body.is-loading {
     height: 54px;
     border-radius: 50%;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-accent);
     border: 0;
-    box-shadow: 0 8px 22px rgba(33, 89, 71, 0.35);
+    box-shadow: 0 8px 22px var(--brand-shadow-strong);
     z-index: 31;
   }
   .fab svg {

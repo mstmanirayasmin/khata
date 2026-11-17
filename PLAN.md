@@ -101,6 +101,7 @@ All derived views (summary, charts, list) re-render from state through one `rend
 - Page preloader: brand mark + animated progress bar, waits for real page readiness with a minimum display time and a failsafe timeout.
 - Scroll-to-top button: fades in after 400px of scrolling and smooth-scrolls back to the top.
 - Narrow footer band: live date/time with seconds plus "Designed & developed by Mst. Manira Yasmin".
+- Smart light/dark theme: system-preference default, persisted overrides, pre-paint theme resolution, and chart/category repainting on switch.
 - Empty and zero-result states with actionable buttons.
 
 ---
