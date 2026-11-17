@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Design tokens — single source of truth for the visual system.
+   Change values here to re-theme the whole app.
+   ========================================================================== */
+:root {
+  /* Surfaces & ink */
+  --paper: #f6f4ef;
+  --surface: #fffdf9;
+  --surface-2: #f0ede5;
+  --ink: #1c1b18;
+  --ink-soft: #514e46;
+  --muted: #858176;
+  --line: #e3ded2;
+  --line-strong: #d3ccbc;
+
+  /* Brand accent — deep forest, used sparingly */
+  --accent: #215947;
+  --accent-hover: #194638;
+  --accent-tint: #e3ede7;
+  --accent-ink: #215947;
+
+  /* Warm secondary for highlights / danger */
+  --danger: #a2402f;
+  --danger-tint: #f7e7e2;
+  --positive: #2f7a5b;
+
+  /* Category palette (muted, earthy) */
+  --c-food: #c26b3f;
+  --c-transport: #4a6fa5;
+  --c-shopping: #9a5a8e;
+  --c-bills: #3f7d8c;
+  --c-health: #b3524e;
+  --c-entertainment: #b58a2b;
+  --c-other: #6f7167;
+
+  /* Type */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-ui: "DM Sans", system-ui, -apple-system, sans-serif;
+
+  /* Scale */
+  --fs-xs: 0.72rem;
+  --fs-sm: 0.82rem;
+  --fs-base: 0.94rem;
+  --fs-md: 1.05rem;
+  --fs-lg: 1.35rem;
+  --fs-xl: clamp(1.9rem, 2.6vw, 2.6rem);
+  --fs-stat: clamp(1.7rem, 2.3vw, 2.25rem);
+
+  /* Spacing */
+  --sp-1: 0.35rem;
+  --sp-2: 0.6rem;
+  --sp-3: 0.9rem;
+  --sp-4: 1.25rem;
+  --sp-5: 1.75rem;
+  --sp-6: 2.4rem;
+
+  /* Form & elevation */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 2px rgba(28, 27, 24, 0.05);
+  --shadow-md: 0 10px 30px rgba(28, 27, 24, 0.08);
+  --shadow-lg: 0 24px 70px rgba(28, 27, 24, 0.18);
+  --ring: 0 0 0 3px rgba(33, 89, 71, 0.18);
+
+  /* Layout */
+  --sidebar-w: 248px;
+  --content-max: 1240px;
+}
